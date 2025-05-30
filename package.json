@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "![Design preview for the Interactive comments section coding challenge](preview.jpg)",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "prettier . --w && vite build",
@@ -20,10 +21,10 @@
     "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.5",
     "@vitejs/plugin-react": "^4.5.0",
-    "path": "^0.12.7",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vite-plugin-svgr": "^4.3.0"
+    "vite-plugin-svgr": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }
