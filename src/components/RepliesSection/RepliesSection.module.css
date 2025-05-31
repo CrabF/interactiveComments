@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  gap: 40px;
+}
+
+.separator {
+  border-left: 2px solid #dce0eb;
+  margin-left: 40px;
+}
+
+.replies {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

@@ -1,0 +1,39 @@
+.container {
+  background-color: white;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  border-radius: 15px;
+  min-height: 150px;
+}
+
+.avatar {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.btn {
+  padding: 0;
+  width: 85px;
+  height: 40px;
+  background-color: #5357b6;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btnText {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+}
+
+.textArea {
+  flex: 1;
+  border-radius: 10px;
+  padding: 15px 20px;
+  border-color: #dce0eb;
+}
