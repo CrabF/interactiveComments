@@ -1,5 +1,11 @@
 * {
   box-sizing: border-box;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 16px;
+}
+
+p {
+  margin: 0;
 }
 
 body {
