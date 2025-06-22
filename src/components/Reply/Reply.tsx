@@ -1,9 +1,10 @@
-import { Data } from "@/types/types";
+import { Comment, Data } from "@/types/types";
 import UserContext from "@/UserContext";
 import { SetStateAction, useContext, useState } from "react";
 import styles from "./Reply.module.css";
 
 interface ReplyProps {
+  parrentComment?: Comment;
   avatar: {
     png: string;
     webp: string;
@@ -11,20 +12,33 @@ interface ReplyProps {
   replyingTo?: string;
   data: Data;
   setData: React.Dispatch<SetStateAction<Data | undefined>>;
+  setIsReplying?: React.Dispatch<SetStateAction<boolean>>;
 }
 
-const Reply = ({ avatar, replyingTo, data, setData }: ReplyProps) => {
-  const [commentTxt, setCommentTxt] = useState("");
+const Reply = ({
+  parrentComment,
+  avatar,
+  replyingTo,
+  data,
+  setData,
+  setIsReplying,
+}: ReplyProps) => {
+  const [commentTxt, setCommentTxt] = useState(
+    replyingTo ? `@${replyingTo}, ` : ""
+  );
   const currentUser = useContext(UserContext);
+  let id = 100;
+
+  const reformCommentTxt = commentTxt.split(",").slice(1).join("");
 
   // This is mock data as example
-  const generateReply = () => {
+  const generateReply = (newComment = false) => {
     return {
-      id: 100,
-      content: commentTxt,
-      createdAt: "1 week ago",
+      id: id++,
+      content: newComment ? commentTxt : reformCommentTxt,
+      createdAt: "now",
       score: 0,
-      replyingTo: replyingTo,
+      replyingTo: replyingTo!,
       user: currentUser!,
       replies: [],
     };
@@ -32,11 +46,18 @@ const Reply = ({ avatar, replyingTo, data, setData }: ReplyProps) => {
 
   // Till this func add only main comment
   const handleSetReply = () => {
-    const newData = {
-      currentUser: currentUser!,
-      comments: [...data.comments, generateReply()],
-    };
-    setData(newData);
+    data.comments.find((comment) => comment);
+    if (replyingTo) {
+      parrentComment?.replies.push(generateReply());
+      setIsReplying!(false);
+    } else {
+      const newData = {
+        currentUser: currentUser!,
+        comments: [...data.comments, generateReply(true)],
+      };
+      setData(newData);
+      setCommentTxt("");
+    }
   };
   return (
     <div className={styles.container}>
@@ -53,9 +74,8 @@ const Reply = ({ avatar, replyingTo, data, setData }: ReplyProps) => {
         placeholder="Add a comment..."
         name="postComment"
         id=""
-      >
-        {replyingTo && `@${replyingTo}, `}
-      </textarea>
+        value={commentTxt}
+      ></textarea>
       <button onClick={handleSetReply} className={styles.btn}>
         <p className={styles.btnText}>{replyingTo ? "Reply" : "Send"}</p>
       </button>
