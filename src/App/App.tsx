@@ -1,18 +1,31 @@
 import Comment from "@/components/Comment";
 import CommentsSection from "@/components/CommentsSection";
 import Layout from "@/components/Layout";
+import Modal from "@/components/Modal";
 import Reply from "@/components/Reply";
 import { Data } from "@/types/types";
 import UserContext from "@/UserContext";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import styles from "./App.module.css";
 
 const App = () => {
   const [data, setData] = useState<Data>();
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   useEffect(() => {
-    fetch("../../data.json")
-      .then((res) => res.json())
-      .then((data) => setData(data));
+    document.body.classList.toggle(styles.hidden);
+  }, [isOpenModal]);
+
+  useEffect(() => {
+    type DataType = Awaited<ReturnType<typeof fetchData>>;
+    async function fetchData(): Promise<Data> {
+      const response = await fetch("../../data.json");
+      const data: DataType = await response.json();
+      setData(data);
+      return data;
+    }
+    fetchData();
   }, []);
 
   return (
@@ -22,6 +35,8 @@ const App = () => {
           {data?.comments.map((comment) => {
             return (
               <Comment
+                setModal={setIsOpenModal}
+                key={comment.id}
                 data={data}
                 setData={setData}
                 commentData={comment}
@@ -37,6 +52,11 @@ const App = () => {
             ></Reply>
           )}
         </CommentsSection>
+        {isOpenModal &&
+          createPortal(
+            <Modal deleteComment={() => {}} setIsModalOpen={setIsOpenModal} />,
+            document.body
+          )}
       </Layout>
     </UserContext.Provider>
   );

@@ -1,7 +1,7 @@
-import { IconMinus, IconPlus, IconReply } from "@/assets";
+import { IconDelete, IconEdit, IconMinus, IconPlus, IconReply } from "@/assets";
 import { Comment as CommentInterface, Data } from "@/types/types";
 import UserContext from "@/UserContext";
-import { SetStateAction, useContext, useState } from "react";
+import React, { SetStateAction, useContext, useState } from "react";
 import RepliesSection from "../RepliesSection";
 import Reply from "../Reply";
 import styles from "./Comment.module.css";
@@ -12,6 +12,7 @@ interface CommentProps {
   commentData: CommentInterface;
   data: Data;
   setData: React.Dispatch<SetStateAction<Data | undefined>>;
+  setModal: React.Dispatch<SetStateAction<boolean>>;
 }
 
 const Comment = ({
@@ -20,9 +21,10 @@ const Comment = ({
   level,
   data,
   setData,
+  setModal,
 }: CommentProps) => {
   level++;
-  const { content, createdAt, replies, score, user } = commentData;
+  const { content, createdAt, replies, score, user, id } = commentData;
   const [isReplying, setIsReplying] = useState(false);
   const currentUser = useContext(UserContext);
 
@@ -30,9 +32,17 @@ const Comment = ({
     setIsReplying(!isReplying);
   };
 
-  if (level > 5) {
-    return null;
-  }
+  const handleDeleteComment = () => {
+    setModal(true);
+    // const newComments = data.comments.filter((comment) => comment.id != id);
+
+    // setData({
+    //   comments: newComments,
+    //   currentUser: currentUser!,
+    // });
+  };
+
+  const handleEditComment = () => {};
 
   return (
     <>
@@ -55,12 +65,30 @@ const Comment = ({
                 alt="avatar"
               />
               <p className={styles.name}>{user.username}</p>
+              {user.username === currentUser?.username && (
+                <p className={styles.currentUser}>you</p>
+              )}
               <p className={styles.text}>{createdAt}</p>
             </span>
-            <button onClick={handleReplyComment} className={styles.btnReply}>
-              <IconReply />
-              <p className={styles.textSelection}>Reply</p>
-            </button>
+            {user.username === currentUser?.username ? (
+              <div className={styles.userBtns}>
+                <button onClick={handleDeleteComment} className={styles.btn}>
+                  <IconDelete />
+                  <p className={`${styles.textSelection} ${styles.textSpec}`}>
+                    Delete
+                  </p>
+                </button>
+                <button onClick={handleEditComment} className={styles.btn}>
+                  <IconEdit />
+                  <p className={styles.textSelection}>Edit</p>
+                </button>
+              </div>
+            ) : (
+              <button onClick={handleReplyComment} className={styles.btn}>
+                <IconReply />
+                <p className={styles.textSelection}>Reply</p>
+              </button>
+            )}
           </span>
           <span className={styles.text}>
             {replyingTo && (
@@ -72,6 +100,8 @@ const Comment = ({
       </div>
       {isReplying && (
         <Reply
+          parrentComment={commentData}
+          setIsReplying={setIsReplying}
           data={data}
           setData={setData}
           replyingTo={user.username}
@@ -83,6 +113,8 @@ const Comment = ({
           {commentData.replies.map((reply) => {
             return (
               <Comment
+                setModal={setModal}
+                key={reply.id}
                 data={data}
                 setData={setData}
                 replyingTo={reply.replyingTo}
